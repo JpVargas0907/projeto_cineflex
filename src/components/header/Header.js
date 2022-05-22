@@ -10,6 +10,9 @@ export default function Header(){
 }
 
 const Topo = styled.div` 
+    top: 0;
+    left: 0;
+    position: fixed;
     width: 100vw;
     height: 66px;
     background-color: #C3CFD9;
@@ -19,7 +22,6 @@ const Topo = styled.div`
 
     p{
         color: #E8833A;
-        font-family: 'Roboto';
         font-weight: 400;
         font-size: 34px;
     }
