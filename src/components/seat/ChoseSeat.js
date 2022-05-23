@@ -9,6 +9,7 @@ import { useState } from 'react';
 export default function ChoseSeat(props) {
     const { sessionId } = useParams();
 
+
     useEffect(() => {
         const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/showtimes/${sessionId}/seats`);
 
@@ -18,13 +19,15 @@ export default function ChoseSeat(props) {
         })
     }, [])
 
+    console.log(props.sessionInfo.day);
+
     return (
         <>
             <Content>
                 <p>Selecione o(s) assentos</p>
                 <Seats>
                     {props.seatList.map((seat, index) =>
-                        <Seat key={index} id={seat.id} name={seat.name} isAvailable={seat.isAvailable} selectedSeats={props.selectedSeats} setSelectedSeats={props.setSelectedSeats}/>
+                        <Seat key={index} id={seat.id} name={seat.name} isAvailable={seat.isAvailable} selectedSeats={props.selectedSeats} setSelectedSeats={props.setSelectedSeats} />
                     )}
                     <StatusChair>
                         <SelectedChair>
@@ -41,10 +44,10 @@ export default function ChoseSeat(props) {
                         </UnvailableChair>
                     </StatusChair>
                 </Seats>
-                <ClientForm name={props.name} setName={props.setName} CPF={props.CPF} setCPF={props.setCPF}/>
-                <ReserveButton />
+                <ClientForm name={props.name} setName={props.setName} CPF={props.CPF} setCPF={props.setCPF} />
+                <ReserveButton name={props.name} CPF={props.CPF} selectedSeats={props.selectedSeats} />
             </Content>
-            <Footer title={props.movie.title} posterURL={props.movie.posterURL} hour={props.sessionInfo.name} />
+            <Footer title={props.movie.title} posterURL={props.movie.posterURL} day={props.sessionInfo.name} hour={props.sessionInfo.name} />
         </>
     );
 }
@@ -84,7 +87,6 @@ function Seat(props) {
     )
 
     function reserveSeat() {
-        console.log(props.selectedSeats)
 
         if (selected === false && props.isAvailable) {
             setColor("#8DD7CF");
@@ -93,6 +95,7 @@ function Seat(props) {
         } else if (selected === true) {
             setColor("#C3CFD9");
             setSelected(false);
+            props.setSelectedSeats(props.selectedSeats.filter(r => r !== props.name));
         } else if (!props.isAvailable) {
             alert("Esse assento não está disponível")
         }
@@ -186,9 +189,9 @@ function ClientForm(props) {
         <Forms>
             <form>
                 <label for="lname">Nome do comprador:</label>
-                <input type="text" placeholder="  Digite seu nome ..." onChange={e => props.setName(e.target.value)}/>
+                <input type="text" placeholder="  Digite seu nome ..." onChange={e => props.setName(e.target.value)} />
                 <label for="lname">CPF do comprador:</label>
-                <input type="text" placeholder="  Digite seu CPF ..." onChange={e => props.setCPF(e.target.value)}/>
+                <input type="text" placeholder="  Digite seu CPF ..." onChange={e => props.setCPF(e.target.value)} />
             </form>
         </Forms>
     );
@@ -222,13 +225,33 @@ const Forms = styled.div`
     }
 `
 
-function ReserveButton() {
+function ReserveButton(props) {
+    const request = {
+        ids: props.selectedSeats,
+        name: props.name,
+        cpf: props.CPF
+    }
+
+    function sendData(){
+            console.log(request);
+
+
+            const promise = axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", request);
+    
+            promise.then(sucesso); 
+    }
+
+    function sucesso(){
+        alert("Requisição feita com sucesso.");
+    }
+
     return (
-        <Link to={'/sucess'}>
-            <Button>
+        <Link to="/sucess">
+            <Button onClick={sendData}>
                 <p>Reservar Assento(s)</p>
             </Button>
         </Link>
+
     );
 }
 

@@ -79,6 +79,7 @@ const BuyerData = styled.div`
 
 `
 function ReserveButton() {
+
     return (
         <Link to="/">
             <Button>
