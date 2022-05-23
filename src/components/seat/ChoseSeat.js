@@ -19,8 +19,6 @@ export default function ChoseSeat(props) {
         })
     }, [])
 
-    console.log(props.sessionInfo.day);
-
     return (
         <>
             <Content>
@@ -233,8 +231,6 @@ function ReserveButton(props) {
     }
 
     function sendData(){
-            console.log(request);
-
 
             const promise = axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", request);
     
