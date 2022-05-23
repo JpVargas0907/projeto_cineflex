@@ -9,7 +9,7 @@ export default function Footer(props){
             </Filmstyle> 
             <Info>
                 <p>{props.title}</p>
-                <p></p>
+                {props.day ? <p>{props.day} - {props.hour}</p> : ""} 
             </Info> 
         </Content>
     );

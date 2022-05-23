@@ -1,8 +1,10 @@
 import React from 'react';
 import Header from "../header/Header";
 import styled from "styled-components";
+import { Link } from 'react-router-dom';
 
-export default function Sucess() {
+export default function Sucess(props) {
+    console.log(props.selectedSeats);
     return (
         <>
             <Header />
@@ -11,25 +13,26 @@ export default function Sucess() {
                 <Data>
                     <BuyerData>
                         <h3>Filme e Sessão</h3>
-                        <p>Enola Holmes</p>
-                        <p>24/06/2021 15:00</p>
+                        <p>{props.movie.title}</p>
+                        <p>{props.sessionInfo.day.date} - {props.sessionInfo.name}</p>
                     </BuyerData>
 
                     <BuyerData>
                         <h3>Ingressos</h3>
-                        <p>Assento 15</p>
-                        <p>Assento 16</p>
+                        {props.selectedSeats.map((ticket, index) =>
+                            <p key={index}>Assento {ticket}</p>
+                        )}
                     </BuyerData>
 
                     <BuyerData>
                         <h3>Comprador</h3>
-                        <p>Nome: João Paulo Vargas</p>
-                        <p>001.035.985-55</p>
+                        <p>Nome: {props.name}</p>
+                        <p>CPF: {props.CPF}</p>
                     </BuyerData>
                 </Data>
                 <ReserveButton />
             </Content>
-                            
+
         </>
     );
 }
@@ -75,15 +78,18 @@ const BuyerData = styled.div`
     }
 
 `
-function ReserveButton(){
+function ReserveButton() {
     return (
-        <Button>
-            <p>Voltar pra Home</p>
-        </Button>
+        <Link to="/">
+            <Button>
+                <p>Voltar pra Home</p>
+            </Button>
+        </Link>
+
     );
 }
 
-   const Button = styled.div`
+const Button = styled.div`
     margin-top: 50px;
     width: 225px;
     height: 42px;
