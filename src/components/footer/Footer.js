@@ -1,16 +1,15 @@
 import React from "react";
 import styled from "styled-components";
-import filme from  "../../assets/_imgs/image 3.png";
 
-export default function Footer(){
+export default function Footer(props){
     return (
         <Content>
             <Filmstyle>
-                <img src={filme} alt=""/>
+                <img src={props.posterURL} alt=""/>
             </Filmstyle> 
             <Info>
-                <p>Enola Holmes</p>
-                <p>Quinta Feira - 15:00</p>
+                <p>{props.title}</p>
+                <p></p>
             </Info> 
         </Content>
     );

@@ -1,28 +1,33 @@
 import React from 'react';
-import Header from "../header/Header";
+import { Link, useParams } from 'react-router-dom';
 import styled from "styled-components";
 import Footer from '../footer/Footer';
+import axios from 'axios';
+import { useEffect } from 'react';
 
-export default function Session() {
+export default function ChoseSession(props) {
+    const { filmId } = useParams();
+
+    useEffect(() => {
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/movies/${filmId}/showtimes`);
+
+        promise.then(response => {
+            props.setMovie(response.data);
+            props.setSessionList([...response.data.days]);
+        })
+    }, [])
+
     return (
         <>
-            <Header />
             <Content>
                 <p>Selecione o horário</p>
                 <Sessions>
-                    <p>Quinta-feira - 24/05/2022</p>
-                    <SessionHour>
-                        <p>15:00</p>
-                    </SessionHour>
-                    <SessionHour>
-                        <p>17:00</p>
-                    </SessionHour>
-                    <SessionHour>
-                        <p>18:00</p>
-                    </SessionHour>
+                    {props.sessionList.map((sessions, index) =>
+                        <SessionHour key={index} id={sessions.id} weekday={sessions.weekday} date={sessions.date} showtimes={sessions.showtimes} />
+                    )}
                 </Sessions>
             </Content>
-            <Footer />
+            <Footer title={props.movie.title} posterURL={props.movie.posterURL} />
         </>
     );
 }
@@ -49,29 +54,51 @@ const Sessions = styled.div`
     margin-left: 24px;
     display: flex;
     flex-wrap: wrap;
+`
 
-    > p{
-        width: 100%;
+function SessionHour(props) {
+    return (
+        <SessionBox>
+            <h3>{props.weekday} - {props.date}</h3>
+            {props.showtimes.map((hour, index) =>
+                <Link to={`/chose-seat/${hour.id}`}>
+                    <SessionButton key={index}>
+                        <p>{hour.name}</p>
+                    </SessionButton>
+                </Link>
+            )}
+        </SessionBox>
+    );
+}
+
+const SessionBox = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+
+   > h3 {
+        width: 100vw;
         font-family: 'Roboto';
         font-style: normal;
         font-size: 20px;
         line-height: 23px;
         color: #293845;
-        margin-bottom: 24px;
-    }
+        margin-bottom: 22px;
+   }
+
+
 `
+const SessionButton = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 82px;
+    height: 42px;
+    background: #E8833A;
+    border-radius: 3px;
+    margin-right: 8px;
+    margin-bottom: 22px;
 
-const SessionHour = styled.div`
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   width: 82px;
-   height: 42px;
-   background: #E8833A;
-   border-radius: 3px;
-   margin-right: 8px;
-
-   > p {
+    > p {
        color: #FFFFFF;
        font-size: 18px;
    }

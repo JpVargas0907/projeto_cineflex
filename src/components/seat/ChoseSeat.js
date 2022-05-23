@@ -1,25 +1,31 @@
 import React from 'react';
-import Header from "../header/Header";
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import axios from 'axios';
 import styled from "styled-components";
 import Footer from '../footer/Footer';
+import { useState } from 'react';
 
-export default function Seat() {
+export default function ChoseSeat(props) {
+    const { sessionId } = useParams();
+
+    useEffect(() => {
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/showtimes/${sessionId}/seats`);    
+    
+        promise.then(response => {
+            props.setSessionInfo(response.data);
+            props.setSeatList([...response.data.seats]);
+        })
+    }, [])
+
     return (
         <>
-            <Header />
             <Content>
                 <p>Selecione o(s) assentos</p>
                 <Seats>
-                    <Chair />
-                    <Chair />
-                    <Chair />
-                    <Chair />
-                    <Chair />
-                    <Chair />
-                    <Chair />
-                    <Chair />
-                    <Chair />
-                    <Chair />
+                    {props.seatList.map((seat, index) =>
+                        <Seat key={index} id = {seat.id} name = {seat.name} isAvailable = {seat.isAvailable}/>
+                    )}
                     <StatusChair>
                         <SelectedChair>
                             <div></div>
@@ -38,7 +44,7 @@ export default function Seat() {
                 <ClientForm />
                 <ReserveButton />
             </Content>
-            <Footer />
+            <Footer title={props.movie.title} posterURL={props.movie.posterURL} />
         </>
     );
 }
@@ -70,15 +76,49 @@ const Seats = styled.div`
         padding: 10px;
     `
 
+function Seat(props){
+    const [selected, setSelected] = useState(false);
+
+    const [color, setColor] = useState(
+        props.isAvailable ? "#C3CFD9" : "#FBE192"
+    )
+
+    function reserveSeat(){
+        if(selected === false && props.isAvailable){
+            setColor("#8DD7CF")
+            setSelected(true);
+        } else if(selected === true){
+            setColor("#C3CFD9")
+            setSelected(false);
+        } else if(!props.isAvailable){
+            alert("Esse assento não está disponível")
+        }
+    }
+
+    return (
+    <Chair onClick={reserveSeat} status = {color}>
+        <p>{props.name}</p>
+    </Chair>
+    );
+}
+
 const Chair = styled.div`
         width: 26px;
         height: 26px;
         left: 24px;
         top: 158px;
         margin: 0px 7px 24px 0px;
-        background: #C3CFD9;
+        background: ${props => props.status};
         border: 1px solid #808F9D;
         border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        p{
+            font-size: 12px;
+            color: #000000;
+        }
     `
 
 const StatusChair = styled.div`
@@ -100,7 +140,7 @@ const SelectedChair = styled.div`
     > div {
         width: 24px;
         height: 24px;
-        background: #C3CFD9;
+        background: #8DD7CF;
         border: 1px solid #7B8B99;
         border-radius: 17px;
         margin-bottom: 2px;
@@ -115,7 +155,7 @@ const AvailableChair = styled.div`
     > div {
         width: 24px;
         height: 24px;
-        background: #8DD7CF;;
+        background: #C3CFD9;
         border: 1px solid #1AAE9E;
         border-radius: 17px;
         margin-bottom: 2px;

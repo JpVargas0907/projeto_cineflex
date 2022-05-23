@@ -1,8 +1,8 @@
 import React from "react";
 import axios from 'axios';
-import Header from "../header/Header";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function Home(props) {
 
@@ -17,15 +17,14 @@ export default function Home(props) {
 
     return (
         <>
-            <Header />
             <Content>
                 <p>Selecione o filme</p>
                 <FilmContent>
-                    {props.filmList.map((film, index) => 
-                        <Film key = {index} img = {film.posterURL}/>    
+                    {props.filmList.map((film, index) =>
+                        <Film key={index} id={film.id} img={film.posterURL} tittle={film.tittle}/>
                     )}
                 </FilmContent>
-             </Content>
+            </Content>
         </>
     );
 }
@@ -57,9 +56,12 @@ const FilmContent = styled.div`
 
 function Film(props) {
     return (
-        <Filmstyle>
-            <img src={props.img} alt=""/>
-        </Filmstyle>     
+        <Link to = {`/chose-session/${props.id}`}>
+            <Filmstyle>
+                <img src={props.img} alt={props.tittle} />
+            </Filmstyle>
+        </Link>
+
     );
 }
 
